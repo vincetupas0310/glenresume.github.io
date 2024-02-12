@@ -176,7 +176,7 @@
                     <li>Outlook</li>
                     <li>Canva</li>
                     <li>Google Calendar</li>
-                    <li>Calendar</li>
+                    <li>Outlook Calendar</li>
                     <li>Asana</li>
                     <li>Trello</li>
                     <li>Snipping Tool</li>
@@ -189,7 +189,8 @@
     </div>
    
     <button onclick="downloadAsPDF()">Download as PDF</button>
-
+    <button onclick="openInWord()">Open in Word</button>
+    
     <script>
     function downloadAsPDF() {
         const content = document.getElementById('content').innerHTML;
@@ -225,7 +226,21 @@
             };
         }
     }
-    </script>
     
+    function openInWord() {
+        const content = document.getElementById('content').innerHTML;
+        const styles = document.querySelector('style').outerHTML; // Get all styles
+        
+        // Create a blob containing the PDF content
+        const htmlContent = '<html><head><title>Resume</title>' + styles + '</head><body>' + content + '</body></html>';
+        const blob = new Blob([htmlContent], { type: 'application/msword' });
+        
+        // Create a temporary URL for the blob
+        const url = window.URL.createObjectURL(blob);
+        
+        // Open the blob URL in a new window
+        window.open(url);
+    }
+    </script>
 </body>
 </html>
