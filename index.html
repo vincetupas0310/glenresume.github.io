@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <title>Resume</title>
     <style>
         body {
@@ -99,7 +98,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="content">
         <header>
             <img src="profile.jpg" alt="Profile Picture">
             <h1>Glendelyn Morales</h1>
@@ -167,12 +166,45 @@
             <p>test</p>    
         </section>
     </div>
-    <button id="save-pdf">Save as PDF</button>
+   
+    <button onclick="downloadAsPDF()">Download as PDF</button>
+
     <script>
-        document.getElementById('save-pdf').addEventListener('click', function () {
-            var element = document.getElementById('resume-container');
-            html2pdf(element);
-        });
+    function downloadAsPDF() {
+        const content = document.getElementById('content').innerHTML;
+        const styles = document.querySelector('style').outerHTML; // Get all styles
+        
+        // Create a hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        const doc = iframe.contentWindow.document;
+        
+        // Write HTML content with CSS styles to the iframe
+        doc.open();
+        doc.write('<html><head><title>Resume</title>' + styles + '</head><body>' + content + '</body></html>');
+        doc.close();
+        
+        // Wait for images to load
+        const images = doc.getElementsByTagName('img');
+        let imagesLoaded = 0;
+        for (let i = 0; i < images.length; i++) {
+            images[i].onload = function() {
+                imagesLoaded++;
+                if (imagesLoaded === images.length) {
+                    // All images loaded, trigger print
+                    setTimeout(() => {
+                        iframe.contentWindow.print();
+                        // Remove the iframe after printing
+                        setTimeout(() => {
+                            document.body.removeChild(iframe);
+                        }, 100);
+                    }, 1000); // Delay printing to ensure all images are loaded
+                }
+            };
+        }
+    }
     </script>
+    
 </body>
 </html>
